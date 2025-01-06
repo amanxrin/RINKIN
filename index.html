@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sustainable Shopping Assistant</title>
+    <link rel="stylesheet" href="static/style.css">
+    <!-- Add this in your HTML <head> -->
+    <link rel="stylesheet" href="https://unpkg.com/swiper/swiper-bundle.min.css">
+    <script src="https://unpkg.com/swiper/swiper-bundle.min.js"></script>
+
+</head>
+<body>
+    <header>
+        <h1>RINKIN</h1>
+        <p>Sustainable Shopping Assistant</p>
+    </header>
+
+    <main>
+        <div id="eco-facts">
+            <h3>Did You Know?</h3>
+            <p id="eco-fact"></p>
+            <button id="next-fact">Next Fact</button>
+          </div>
+          
+
+        
+          
+        <div class="swiper-container">
+            <div class="swiper-wrapper">
+                <!-- Slide 1 -->
+                <div class="swiper-slide">
+                    <img src="static\images\WhatsApp Image 2025-01-06 at 18.57.50_968fdd18.jpg" alt="Welcome Banner">
+                    <h2>Discover Quality & Sustainability</h2>
+                    <p>Join us in creating a sustainable future with our curated products.</p>
+                </div>
+                <!-- Slide 2 -->
+                <div class="swiper-slide">
+                    <img src="static\images\WhatsApp Image 2025-01-06 at 18.57.52_b13eb806.jpg" alt="Shop Now">
+                    <h2>Shop Now</h2>
+                    <p>Exclusive deals waiting for you. Don’t miss out!</p>
+                </div>
+                <!-- Slide 3 -->
+                <div class="swiper-slide">
+                    <img src="static\images\WhatsApp Image 2025-01-06 at 18.57.52_97f8d3db.jpg" alt="Eco-Friendly">
+                    <h2>Eco-Friendly Products</h2>
+                    <p>Care for the planet with our eco-friendly collection.</p>
+                </div>
+                <!-- Slide 4 -->
+                <div class="swiper-slide">
+                    <img src="static\images\WhatsApp Image 2025-01-06 at 18.57.51_5598f083.jpg" alt="Community">
+                    <h2>Be a Part of Our Community</h2>
+                    <p>Connect with like-minded people and make a difference together.</p>
+                </div>
+            </div>
+            <!-- Navigation -->
+            <div class="swiper-button-next"></div>
+            <div class="swiper-button-prev"></div>
+            <!-- Pagination -->
+            <div class="swiper-pagination"></div>
+        </div>
+        
+        <section class="search-section">
+            <h2>Find Sustainable Products</h2>
+            <form id="search-form">
+                <input type="text" id="product-search" placeholder="Enter product name" required>
+                <button type="submit">Search</button>
+            </form>
+        </section>
+
+        <section class="results-section" id="results">
+            <h2>Results</h2>
+            <div id="results-container">
+                <p>Eco-ratings and recommendations will appear here.</p>
+            </div>
+            
+        </section>
+    </main>
+
+    <footer>
+        <p>Powered by FastAPI | Helping you shop smarter and greener</p>
+    </footer>
+
+    <script>
+        document.getElementById("search-form").addEventListener("submit", async (event) => {
+            event.preventDefault();
+            const query = document.getElementById("product-search").value;
+
+            try {
+                const response = await fetch(`/api/products/search?query=${encodeURIComponent(query)}`);
+                const results = await response.json();
+                const resultsContainer = document.getElementById("results-container");
+                resultsContainer.innerHTML = "";
+
+                if (results.length === 0) {
+                    resultsContainer.innerHTML = `<p>No products found for "${query}".</p>`;
+                } else {
+                    results.forEach(product => {
+                        const productCard = `
+                            <div class="product-card">
+                                <img src="${product.image_url}" alt="${product.name}" class="product-image">
+                                <h3 class="product-name">${product.name}</h3>
+                                <p class="product-description">${product.description}</p>
+                                <p><strong>Sustainability Score:</strong> ${product.sustainability_score}</p>
+                                <a href="${product.product_url}" target="_blank" class="product-link">Buy Now</a>
+                            </div>
+                        `;
+                        resultsContainer.innerHTML += productCard;
+                    });
+                }
+            } catch (error) {
+                console.error("Error fetching search results:", error);
+                alert("Something went wrong. Please try again later.");
+            }
+            
+        });
+    </script>
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            const swiper = new Swiper('.swiper-container', {
+                loop: true, // Loops the slides infinitely
+                autoplay: {
+                    delay: 3000, // Switch slides every 3 seconds
+                    disableOnInteraction: false,
+                },
+                navigation: {
+                    nextEl: '.swiper-button-next',
+                    prevEl: '.swiper-button-prev',
+                },
+                pagination: {
+                    el: '.swiper-pagination',
+                    clickable: true,
+                },
+            });
+        });
+    </script>
+    <script>
+        const facts = [
+                       "Recycling one aluminum can saves enough energy to run a TV for 3 hours.",
+                       "Switching to LED bulbs can save up to 80% energy.",
+                       "If everyone planted a tree, we could remove billions of tons of CO2 from the atmosphere."
+                    ];
+
+        document.getElementById("next-fact").addEventListener("click", function() {
+        const randomFact = facts[Math.floor(Math.random() * facts.length)];
+        document.getElementById("eco-fact").innerText = randomFact;
+        });
+
+    </script>          
+        
+    
+</body>
+</html>
